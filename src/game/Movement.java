@@ -1,4 +1,4 @@
-package game_pyhsics;
+package src.game;
 
 class Position
 {
