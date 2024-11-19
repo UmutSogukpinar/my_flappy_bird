@@ -5,8 +5,8 @@ import javax.swing.*;
 public class App
 {
     // Size dimensions of board of game
-    static int boardWidth = 360;
-    static int boardHeight = 640;
+    final static int boardWidth = 360;
+    final static int boardHeight = 640;
 
     public static void main(String[] args) throws Exception
     {
@@ -18,6 +18,10 @@ public class App
         frame.setLocationRelativeTo(null);  // Board will be centered of the screen
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // When the window is closed, jvm stops
+
+        FlappyBird flappyBird = new FlappyBird();
+        frame.add(flappyBird);
+        frame.pack(); // pack() method adjusts the window size to fit all of these components properly
 
         frame.setVisible(true);
     }
