@@ -8,9 +8,11 @@ import static src.App.boardWidth;
 public class Bird
 {
     // Attributes
-    Position position;
-    Size size;
     Image image;
+    Position position;
+    Velocity velocity;
+    Size size;
+
 
     // bird feature dimensions
     int birdWidth = 34;
@@ -19,10 +21,14 @@ public class Bird
     int birdPosition_x = boardWidth / 8;
     int birdPosition_y = boardHeight / 2;
 
+    int birdVelocity_y = 0;
+    int birdVelocity_x = 0;
+
     public Bird(Image image)
     {
         this.image = image;
         size = new Size(birdWidth, birdHeight);
         position = new Position(birdPosition_x, birdPosition_y);
+        velocity = new Velocity(birdVelocity_x, birdVelocity_y);
     }
 }

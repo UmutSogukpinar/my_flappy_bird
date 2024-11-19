@@ -22,7 +22,7 @@ public class App
         FlappyBird flappyBird = new FlappyBird();
         frame.add(flappyBird);
         frame.pack(); // pack() method adjusts the window size to fit all of these components properly
-
+        flappyBird.requestFocus();
         frame.setVisible(true);
     }
 }

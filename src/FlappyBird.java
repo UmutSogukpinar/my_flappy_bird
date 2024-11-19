@@ -4,63 +4,97 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.Timer;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
 
-public class FlappyBird extends JPanel
+public class FlappyBird extends JPanel implements ActionListener, KeyListener
 {
-    // bird features
-    int birdWidth = 34;
-    int birdHeight = 24;
+    //GAME attributes
+    Bird bird;
+    // coming soon ==>>> int score;
 
-    int birdPosition_x = boardWidth / 8;
-    int birdPosition_y = boardHeight / 2;
+    //GAME constants
+    static final int gravity = 1;
 
-    // game images
-    Image birdImage;
-    Image backgroundImage;
-    Image upperPipeImage;
-    Image bottomPipeImage;
+    //GAME logic
+    Timer gameLoop;
 
-    // declaration of Dictionary of images
-    Map<String, Image> imageMap = new HashMap<>();
+    // loading game images
+    Image backgroundImage = new ImageIcon(Objects.requireNonNull(getClass()
+                .getResource("./images/flappybirdbg.png"))).getImage();
+    Image birdImage = new ImageIcon(Objects.requireNonNull(getClass()
+                .getResource("./images/flappybird.png"))).getImage();
+    Image upperPipeImage = new ImageIcon(Objects.requireNonNull(getClass()
+                .getResource("./images/toppipe.png"))).getImage();
+    Image bottomPipeImage = new ImageIcon(Objects.requireNonNull(getClass()
+                .getResource("./images/bottompipe.png"))).getImage();
 
-    class Bird
+
+    void drawObjectsAndBackground(Graphics graphics)
     {
-        Image image;
+        //draw background image
+        graphics.drawImage(backgroundImage,
+                0, 0,
+                boardWidth, boardHeight, null);
 
-        public Bird(Image image)
-        {
-            this.image = image;
-            Size birdSize = new Size(birdWidth, birdHeight);
-            Position birdPosition = new Position(birdPosition_x, birdPosition_y);
-        }
+        // draw the bird image
+        graphics.drawImage(birdImage,
+                bird.position.x_axis, bird.position.y_axis,
+                bird.size.width, bird.size.height, null);
     }
 
     @Override
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-
-        //background
-        g.drawImage(backgroundImage, 0, 0, boardWidth, boardHeight, null);
-
+    public void paintComponent(Graphics graphics)
+    {
+        super.paintComponent(graphics);
+        drawObjectsAndBackground(graphics);
     }
 
     public FlappyBird()
     {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
 
-        // loading game images
-        backgroundImage = new ImageIcon(Objects.requireNonNull(getClass()
-                .getResource("./images/flappybirdbg.png"))).getImage();
-        birdImage = new ImageIcon(Objects.requireNonNull(getClass()
-                .getResource("./images/flappybird.png"))).getImage();
-        upperPipeImage = new ImageIcon(Objects.requireNonNull(getClass()
-                .getResource("./images/toppipe.png"))).getImage();
-        bottomPipeImage = new ImageIcon(Objects.requireNonNull(getClass()
-                .getResource("./images/bottompipe.png"))).getImage();
+        setFocusable(true);
+        addKeyListener(this);
 
+        // bird initialization
+        bird = new Bird(birdImage);
 
+        // game timer
+        gameLoop = new Timer(1000/60, this);
+        gameLoop.start();
     }
+
+
+    //keyboard movements
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+        {
+            bird.velocity.y_axis -= 12;
+        }
+    }
+
+    public void birdMove()
+    {
+        //bird movement
+        bird.velocity.y_axis += gravity;
+        bird.position.y_axis += bird.velocity.y_axis;
+        bird.position.y_axis = Math.max(bird.position.y_axis, 0);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        birdMove();
+        repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
 }
