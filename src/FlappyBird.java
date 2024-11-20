@@ -13,6 +13,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 {
     //GAME attributes
     Bird bird;
+    Pipe pipe1_bottom;
+    Pipe pipe1_top;
     // coming soon ==>>> int score;
 
     //GAME constants

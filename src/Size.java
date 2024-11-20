@@ -11,8 +11,4 @@ public class Size
         this.height = height;
     }
 
-    public Size(int width)
-    {
-        this.width = width;
-    }
 }
