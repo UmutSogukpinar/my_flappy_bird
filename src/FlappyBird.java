@@ -17,6 +17,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 
     //GAME constants
     static final int gravity = 1;
+    static final int gap = 20;  // the gap between upper and lower pipe
 
     //GAME logic
     Timer gameLoop;
@@ -32,6 +33,21 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
                 .getResource("./images/bottompipe.png"))).getImage();
 
 
+    public FlappyBird()
+    {
+        setPreferredSize(new Dimension(boardWidth, boardHeight));
+
+        setFocusable(true);
+        addKeyListener(this);
+
+        // bird initialization
+        bird = new Bird(birdImage);
+
+        // game timer
+        gameLoop = new Timer(1000/50, this);
+        gameLoop.start();
+    }
+
     void drawObjectsAndBackground(Graphics graphics)
     {
         //draw background image
@@ -45,6 +61,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
                 bird.size.width, bird.size.height, null);
     }
 
+    // drawing attribute
     @Override
     public void paintComponent(Graphics graphics)
     {
@@ -52,34 +69,23 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         drawObjectsAndBackground(graphics);
     }
 
-    public FlappyBird()
-    {
-        setPreferredSize(new Dimension(boardWidth, boardHeight));
-
-        setFocusable(true);
-        addKeyListener(this);
-
-        // bird initialization
-        bird = new Bird(birdImage);
-
-        // game timer
-        gameLoop = new Timer(1000/60, this);
-        gameLoop.start();
-    }
-
-
     //keyboard movements
-    public void keyPressed(KeyEvent e)
-    {
+    public void keyPressed(KeyEvent e) {}
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE)
         {
-            bird.velocity.y_axis -= 12;
+            bird.velocity.y_axis -= 9;
         }
     }
 
+    //bird movement
     public void birdMove()
     {
-        //bird movement
         bird.velocity.y_axis += gravity;
         bird.position.y_axis += bird.velocity.y_axis;
         bird.position.y_axis = Math.max(bird.position.y_axis, 0);
@@ -91,10 +97,4 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         birdMove();
         repaint();
     }
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
 }

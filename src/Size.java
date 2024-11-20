@@ -10,4 +10,9 @@ public class Size
         this.width = width;
         this.height = height;
     }
+
+    public Size(int width)
+    {
+        this.width = width;
+    }
 }
