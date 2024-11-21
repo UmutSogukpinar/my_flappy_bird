@@ -45,4 +45,15 @@ public class PipePair
         lowerPipe = new Pipe(lowerPipeImg, new Position(boardWidth / 2, lowerPipePosition_y),
                 new Size(pipeWidth, lowerPipeHeight));
     }
+
+    public void updatePipesLengths()
+    {
+        int newUpperPipeHeight = random.nextInt((boardHeight * 7) / 10) + boardHeight / 10;
+        int newLowerPipeHeight = Math.max(boardHeight - newUpperPipeHeight - gap, boardHeight / 10);
+
+        upperPipe.size.height = newUpperPipeHeight;
+        lowerPipe.size.height = newLowerPipeHeight;
+
+        lowerPipe.position.y_axis = boardHeight - newLowerPipeHeight;
+    }
 }

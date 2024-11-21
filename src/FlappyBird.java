@@ -23,7 +23,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
     //GAME constants
     static final int gravity = 1;
     static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
-    static final int pipeSpeed = 2;
+    static final int pipeSpeed = 10;
 
     //GAME logic
     Timer gameLoop;
@@ -97,8 +97,10 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 
         if (pipePair_1.upperPipe.position.x_axis <= -pipePair_1.upperPipe.size.width)
         {
-            pipePair_1.upperPipe.position.x_axis = boardWidth;  // Ekranın sağından tekrar başla
-            pipePair_1.lowerPipe.position.x_axis = boardWidth;  // Ekranın sağından tekrar başla
+            pipePair_1.upperPipe.position.x_axis = boardWidth;
+            pipePair_1.lowerPipe.position.x_axis = boardWidth;
+
+            pipePair_1.updatePipesLengths();
         }
     }
 
