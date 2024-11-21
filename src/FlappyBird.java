@@ -1,10 +1,14 @@
 package src;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.Timer;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import java.util.Objects;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
@@ -13,13 +17,13 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 {
     //GAME attributes
     Bird bird;
-    Pipe pipe1_bottom;
-    Pipe pipe1_top;
+    PipePair pipePair_1;
     // coming soon ==>>> int score;
 
     //GAME constants
     static final int gravity = 1;
-    static final int gap = 20;  // the gap between upper and lower pipe
+    static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
+    static final int pipeSpeed = 2;
 
     //GAME logic
     Timer gameLoop;
@@ -45,22 +49,57 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         // bird initialization
         bird = new Bird(birdImage);
 
+        // pipe pairs initialization
+        pipePair_1 = new PipePair(upperPipeImage, bottomPipeImage);
+
         // game timer
-        gameLoop = new Timer(1000/50, this);
+        gameLoop = new Timer(1000/40, this);
         gameLoop.start();
     }
 
-    void drawObjectsAndBackground(Graphics graphics)
+    private void drawObjectsAndBackground(Graphics graphics)
     {
         //draw background image
         graphics.drawImage(backgroundImage,
                 0, 0,
-                boardWidth, boardHeight, null);
+                boardWidth, boardHeight,
+                null);
 
         // draw the bird image
         graphics.drawImage(birdImage,
                 bird.position.x_axis, bird.position.y_axis,
-                bird.size.width, bird.size.height, null);
+                bird.size.width, bird.size.height,
+                null);
+
+        // draw pipe pair-1
+        graphics.drawImage(pipePair_1.upperPipe.image,
+                pipePair_1.upperPipe.position.x_axis, pipePair_1.upperPipe.position.y_axis,
+                pipePair_1.upperPipe.size.width, pipePair_1.upperPipe.size.height,
+                null);
+        graphics.drawImage(pipePair_1.lowerPipe.image,
+                pipePair_1.lowerPipe.position.x_axis, pipePair_1.lowerPipe.position.y_axis,
+                pipePair_1.lowerPipe.size.width, pipePair_1.lowerPipe.size.height,
+                null);
+    }
+
+    //bird movement
+    private void birdMove()
+    {
+        bird.velocity.y_axis += gravity;
+        bird.position.y_axis += bird.velocity.y_axis;
+        bird.position.y_axis = Math.max(bird.position.y_axis, 0);
+    }
+
+    private void pipeMove()
+    {
+        pipePair_1.upperPipe.position.x_axis -= pipeSpeed;
+        pipePair_1.lowerPipe.position.x_axis -= pipeSpeed;
+
+        if (pipePair_1.upperPipe.position.x_axis <= -pipePair_1.upperPipe.size.width)
+        {
+            pipePair_1.upperPipe.position.x_axis = boardWidth;  // Ekranın sağından tekrar başla
+            pipePair_1.lowerPipe.position.x_axis = boardWidth;  // Ekranın sağından tekrar başla
+        }
     }
 
     // drawing attribute
@@ -78,25 +117,17 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
     public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE)
-        {
-            bird.velocity.y_axis -= 9;
-        }
-    }
-
-    //bird movement
-    public void birdMove()
+    public void keyReleased(KeyEvent e)
     {
-        bird.velocity.y_axis += gravity;
-        bird.position.y_axis += bird.velocity.y_axis;
-        bird.position.y_axis = Math.max(bird.position.y_axis, 0);
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+            bird.velocity.y_axis -= 9;
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
         birdMove();
+        pipeMove();
         repaint();
     }
 }
