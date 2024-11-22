@@ -40,9 +40,9 @@ public class PipePair
 
     public PipePair(Image upperPipeImg, Image lowerPipeImg)
     {
-        upperPipe = new Pipe(upperPipeImg, new Position(boardWidth / 2, upperPipePosition_y),
+        upperPipe = new Pipe(upperPipeImg, new Position(boardWidth * 2, upperPipePosition_y),
                 new Size(pipeWidth, upperPipeHeight));
-        lowerPipe = new Pipe(lowerPipeImg, new Position(boardWidth / 2, lowerPipePosition_y),
+        lowerPipe = new Pipe(lowerPipeImg, new Position(boardWidth * 2, lowerPipePosition_y),
                 new Size(pipeWidth, lowerPipeHeight));
     }
 

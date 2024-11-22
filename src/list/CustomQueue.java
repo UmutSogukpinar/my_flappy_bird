@@ -25,6 +25,19 @@ public class CustomQueue<T>
         last = null;
     }
 
+    public T getNodeData(Node node)
+    {
+        if (node == null)
+            throw new IllegalArgumentException("Node cannot be null");
+
+        return node.data;
+    }
+
+    public Node getFirst()
+    {
+        return first;
+    }
+
     // add element end of the queue
     public void enqueue(T data)
     {

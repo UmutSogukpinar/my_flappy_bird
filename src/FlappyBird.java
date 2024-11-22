@@ -1,5 +1,8 @@
 package src;
 
+import org.w3c.dom.Node;
+import src.list.CustomQueue;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -17,6 +20,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 {
     //GAME attributes
     Bird bird;
+    CustomQueue<PipePair> pipePairQueue;
     PipePair pipePair_1;
     // coming soon ==>>> int score;
 
@@ -52,6 +56,10 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         // pipe pairs initialization
         pipePair_1 = new PipePair(upperPipeImage, bottomPipeImage);
 
+        // pipe pair queue initialization
+        pipePairQueue = new CustomQueue<>();
+        pipePairQueue.enqueue(pipePair_1);
+
         // game timer
         gameLoop = new Timer(1000/40, this);
         gameLoop.start();
@@ -82,6 +90,13 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
                 null);
     }
 
+    // total movements
+    private void gameMovements()
+    {
+        birdMove();
+        allPipeMoves();
+    }
+
     //bird movement
     private void birdMove()
     {
@@ -90,17 +105,22 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         bird.position.y_axis = Math.max(bird.position.y_axis, 0);
     }
 
-    private void pipeMove()
+    private void allPipeMoves()
     {
-        pipePair_1.upperPipe.position.x_axis -= pipeSpeed;
-        pipePair_1.lowerPipe.position.x_axis -= pipeSpeed;
+        eachPairPipeMove(pipePair_1);
+    }
 
-        if (pipePair_1.upperPipe.position.x_axis <= -pipePair_1.upperPipe.size.width)
+    private void eachPairPipeMove(PipePair pipePair)
+    {
+        pipePair.upperPipe.position.x_axis -= pipeSpeed;
+        pipePair.lowerPipe.position.x_axis -= pipeSpeed;
+
+        if (pipePair.upperPipe.position.x_axis <= -pipePair.upperPipe.size.width)
         {
-            pipePair_1.upperPipe.position.x_axis = boardWidth;
-            pipePair_1.lowerPipe.position.x_axis = boardWidth;
+            pipePair.upperPipe.position.x_axis = boardWidth;
+            pipePair.lowerPipe.position.x_axis = boardWidth;
 
-            pipePair_1.updatePipesLengths();
+            pipePair.updatePipesLengths();
         }
     }
 
@@ -128,8 +148,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        birdMove();
-        pipeMove();
+        gameMovements();
         repaint();
     }
 }
