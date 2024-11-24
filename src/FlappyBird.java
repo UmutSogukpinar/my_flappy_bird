@@ -1,8 +1,5 @@
 package src;
 
-import org.w3c.dom.Node;
-import src.list.CustomQueue;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -12,6 +9,9 @@ import java.util.Objects;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
+import static src.PipePair.pipeWidth;
+
+import src.list.CustomQueue;
 
 public class FlappyBird extends JPanel implements ActionListener, KeyListener, MouseListener
 {
@@ -24,8 +24,11 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     //GAME constants
     static final int gravity = 1;
     static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
-    static final int pipeSpeed = 3;
     static final int birdSpeed = 12;
+    static final int pipeSpeed = 3;
+    static final int pipeNumber = 3;
+    static final int firstPipePosition = boardWidth + boardWidth / 2;
+    static final int frameXLimit = -2 * pipeWidth;
 
     //GAME logic
     Timer gameLoop;
@@ -44,8 +47,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     public FlappyBird()
     {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
-
         setFocusable(true);
+
         addKeyListener(this);
         addMouseListener(this);
 
@@ -53,7 +56,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         bird = new Bird(birdImage);
 
         // pipe pairs initialization
-        pipePair_1 = new PipePair(upperPipeImage, bottomPipeImage);
+        pipePair_1 = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
 
         // pipe pair queue initialization
         pipePairQueue = new CustomQueue<>();
@@ -62,6 +65,28 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         // game timer
         gameLoop = new Timer(1000/40, this);
         gameLoop.start();
+    }
+
+    // drawing attribute
+    @Override
+    public void paintComponent(Graphics graphics)
+    {
+        super.paintComponent(graphics);
+        drawObjectsAndBackground(graphics);
+    }
+
+    // total movements
+    private void gameMovements()
+    {
+        birdMove();
+        allPipeMoves();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        gameMovements();
+        repaint();
     }
 
     private void drawObjectsAndBackground(Graphics graphics)
@@ -91,12 +116,6 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
                     null);
         }
     }
-    // total movements
-    private void gameMovements()
-    {
-        birdMove();
-        allPipeMoves();
-    }
 
     //bird movement
     private void birdMove()
@@ -117,7 +136,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         pipePair.upperPipe.position.x_axis -= pipeSpeed;
         pipePair.lowerPipe.position.x_axis -= pipeSpeed;
 
-        if (pipePair.upperPipe.position.x_axis <= -2 * pipePair.upperPipe.size.width)
+        if (pipePair.upperPipe.position.x_axis <= frameXLimit)
         {
             pipePair.upperPipe.position.x_axis = boardWidth;
             pipePair.lowerPipe.position.x_axis = boardWidth;
@@ -125,21 +144,6 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
             // updating pipes' length with each new turn
             pipePair.updatePipesLengths();
         }
-    }
-
-    // drawing attribute
-    @Override
-    public void paintComponent(Graphics graphics)
-    {
-        super.paintComponent(graphics);
-        drawObjectsAndBackground(graphics);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        gameMovements();
-        repaint();
     }
 
     //keyboard movements
@@ -155,6 +159,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
             bird.velocity.y_axis -= birdSpeed;
     }
 
+    // mouse movements
     @Override
     public void mouseReleased(MouseEvent e)
     {

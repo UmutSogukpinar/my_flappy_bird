@@ -9,6 +9,8 @@ import static src.FlappyBird.gap;
 
 public class PipePair
 {
+    private final Random random = new Random();
+
     class Pipe
     {
         Position position;
@@ -26,23 +28,23 @@ public class PipePair
     Pipe upperPipe;
     Pipe lowerPipe;
 
-    static final int pipeWidth = boardWidth / 6;
-
-    private final Random random = new Random();
+    public static final int pipeWidth = boardWidth / 6;
 
     // random upper pipe height
-    int upperPipeHeight = Math.max(random.nextInt((boardHeight * 7) / 10), boardHeight / 4);
-    int lowerPipeHeight = Math.max(boardHeight - upperPipeHeight - gap, boardHeight / 10);
+    public int upperPipeHeight = Math.max(random.nextInt((boardHeight * 7) / 10), boardHeight / 4);
+    public int lowerPipeHeight = Math.max(boardHeight - upperPipeHeight - gap, boardHeight / 10);
 
     // y axis positions for pipes
     int upperPipePosition_y = 0;
     int lowerPipePosition_y = boardHeight - lowerPipeHeight;
 
-    public PipePair(Image upperPipeImg, Image lowerPipeImg)
+    public PipePair(Image upperPipeImg, Image lowerPipeImg, int pipesPosition_x)
     {
-        upperPipe = new Pipe(upperPipeImg, new Position(boardWidth, upperPipePosition_y),
+        upperPipe = new Pipe(upperPipeImg,
+                new Position(pipesPosition_x, upperPipePosition_y),
                 new Size(pipeWidth, upperPipeHeight));
-        lowerPipe = new Pipe(lowerPipeImg, new Position(boardWidth , lowerPipePosition_y),
+        lowerPipe = new Pipe(lowerPipeImg,
+                new Position(pipesPosition_x, lowerPipePosition_y),
                 new Size(pipeWidth, lowerPipeHeight));
     }
 

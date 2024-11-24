@@ -4,22 +4,9 @@ import java.util.Iterator;
 
 public class CustomQueue<T> implements Iterable<T>
 {
-    // Node class initialization
-    class Node
-    {
-        T data;
-        Node next;
-
-        public Node(T data)
-        {
-            this.data = data;
-            next = null;
-        }
-    }
-
     // CustomQueue attributes
-    Node first;
-    Node last;
+    Node<T> first;
+    Node<T> last;
 
     public CustomQueue()
     {
@@ -27,18 +14,10 @@ public class CustomQueue<T> implements Iterable<T>
         last = null;
     }
 
-    public T getNodeData(Node node)
-    {
-        if (node == null)
-            throw new IllegalArgumentException("Node cannot be null");
-
-        return node.data;
-    }
-
     // Add element to the end of the queue
     public void enqueue(T data)
     {
-        Node newNode = new Node(data);
+        Node<T> newNode = new Node<>(data);
 
         if (last == null)
             first = newNode;
@@ -52,9 +31,9 @@ public class CustomQueue<T> implements Iterable<T>
     public void updateQueue()
     {
         if (first == null || first.next == null)
-            return;
+            return ;
 
-        Node firstNode = first;
+        Node<T> firstNode = first;
         first = first.next;
         last.next = firstNode;
         last = firstNode;
@@ -71,7 +50,7 @@ public class CustomQueue<T> implements Iterable<T>
     // Inner class for the iterator
     private class CustomQueueIterator implements Iterator<T>
     {
-        private Node current = first;
+        private Node<T> current = first;
 
         @Override
         public boolean hasNext()
