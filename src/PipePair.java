@@ -58,4 +58,10 @@ public class PipePair
 
         lowerPipe.position.y_axis = boardHeight - newLowerPipeHeight;
     }
+
+    public void updatePipePositions(int change)
+    {
+        upperPipe.position.x_axis += change;
+        lowerPipe.position.x_axis += change;
+    }
 }

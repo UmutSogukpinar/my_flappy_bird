@@ -5,30 +5,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.sql.Array;
 import java.util.Objects;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
 import static src.PipePair.pipeWidth;
 
-import src.list.CustomQueue;
-
 public class FlappyBird extends JPanel implements ActionListener, KeyListener, MouseListener
 {
     //GAME attributes
     Bird bird;
-    CustomQueue<PipePair> pipePairQueue;
-    PipePair pipePair_1;
+    PipePair[] pipePairQueue;
+    PipePair pipePair;
     // coming soon ==>>> int score;
 
     //GAME constants
     static final int gravity = 1;
     static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
+    static final int frameXLimit = -2 * pipeWidth;
     static final int birdSpeed = 12;
     static final int pipeSpeed = 3;
     static final int pipeNumber = 3;
-    static final int firstPipePosition = boardWidth + boardWidth / 2;
-    static final int frameXLimit = -2 * pipeWidth;
+    static final int gapBetweenPipes = (boardWidth * 2) / 3;
+    static final int backToLastOne = pipeNumber * gapBetweenPipes;
 
     //GAME logic
     Timer gameLoop;
@@ -54,16 +54,21 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
         // bird initialization
         bird = new Bird(birdImage);
+        pipePairQueue = new PipePair[pipeNumber];
 
-        // pipe pairs initialization
-        pipePair_1 = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
+        for (int i = 0; i < pipeNumber; i++)
+        {
+            final int firstPipePosition = boardWidth + gapBetweenPipes * (i + 1);
+            // pipe pairs initialization
+            pipePair = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
 
-        // pipe pair queue initialization
-        pipePairQueue = new CustomQueue<>();
-        pipePairQueue.enqueue(pipePair_1);
+            // pipe pair queue initialization
+
+            pipePairQueue[i] = pipePair;
+        }
 
         // game timer
-        gameLoop = new Timer(1000/40, this);
+        gameLoop = new Timer(1000/60, this);
         gameLoop.start();
     }
 
@@ -133,13 +138,14 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
     private void eachPairPipeMove(PipePair pipePair)
     {
+
         pipePair.upperPipe.position.x_axis -= pipeSpeed;
         pipePair.lowerPipe.position.x_axis -= pipeSpeed;
 
         if (pipePair.upperPipe.position.x_axis <= frameXLimit)
         {
-            pipePair.upperPipe.position.x_axis = boardWidth;
-            pipePair.lowerPipe.position.x_axis = boardWidth;
+            // first pipe in queue goes to bottom of the queue
+            pipePair.updatePipePositions(backToLastOne);
 
             // updating pipes' length with each new turn
             pipePair.updatePipesLengths();
