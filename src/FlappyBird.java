@@ -21,11 +21,16 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     // coming soon ==>>> int score;
 
     //GAME constants
-    static final int gravity = 1;
-    static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
+    static boolean isGameOver = false;
     static final int frameXLimit = -2 * pipeWidth;
+    static final int frameYUpperLimit = -(boardHeight / 4);
+
+    static final int gravity = 1;
     static final int birdSpeed = 12;
-    static final int pipeSpeed = 3;
+    static final int minBirdSpeed = birdSpeed * 15;
+
+    static final int gap = boardHeight / 6;  // the gap between upper and lower pipe
+    static final int pipeSpeed = 20;
     static final int pipeNumber = 3;
     static final int gapBetweenPipes = (boardWidth * 2) / 3;
     static final int backToLastOne = pipeNumber * gapBetweenPipes;
@@ -92,6 +97,9 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     {
         gameMovements();
         repaint();
+        if (isGameOver)
+            gameLoop.stop();
+
     }
 
     private void drawObjectsAndBackground(Graphics graphics)
@@ -126,8 +134,15 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     private void birdMove()
     {
         bird.velocity.y_axis += gravity;
-        bird.position.y_axis += bird.velocity.y_axis;
-        bird.position.y_axis = Math.max(bird.position.y_axis, 0);
+        // checking whether velocity reach maximum or not and limiting maximum velocity
+        if (bird.velocity.y_axis >= 0)
+            bird.position.y_axis += Math.min(bird.velocity.y_axis, minBirdSpeed);
+        else
+            bird.position.y_axis += Math.max(bird.velocity.y_axis, -minBirdSpeed);
+
+        bird.position.y_axis = Math.max(bird.position.y_axis, frameYUpperLimit);
+        if (bird.position.y_axis >= boardHeight - bird.size.height)
+            isGameOver = true;
     }
 
     private void allPipeMoves()

@@ -8,7 +8,7 @@ public class App
     final static int boardWidth = 360;
     final static int boardHeight = 640;
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
         JFrame frame = new JFrame("Flappy Bird");
 

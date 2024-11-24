@@ -25,33 +25,44 @@ public class PipePair
         }
     }
 
+    // attributes of PipePair class
     Pipe upperPipe;
     Pipe lowerPipe;
 
+    //common width of the pipes
     public static final int pipeWidth = boardWidth / 6;
 
+    // extra length for the pipes;
+    private static final int extraLength = boardHeight / 2;
+
     // random upper pipe height
-    public int upperPipeHeight = Math.max(random.nextInt((boardHeight * 7) / 10), boardHeight / 4);
-    public int lowerPipeHeight = Math.max(boardHeight - upperPipeHeight - gap, boardHeight / 10);
+    public int upperPipeHeight = Math.max(
+            random.nextInt((boardHeight * 7) / 10) + extraLength,
+            (boardHeight / 4) + extraLength);
+    public int lowerPipeHeight = boardHeight - upperPipeHeight - gap + extraLength;
 
     // y axis positions for pipes
-    int upperPipePosition_y = 0;
+    int upperPipePosition_y = -extraLength;
     int lowerPipePosition_y = boardHeight - lowerPipeHeight;
 
     public PipePair(Image upperPipeImg, Image lowerPipeImg, int pipesPosition_x)
     {
-        upperPipe = new Pipe(upperPipeImg,
+        upperPipe = new Pipe(
+                upperPipeImg,
                 new Position(pipesPosition_x, upperPipePosition_y),
                 new Size(pipeWidth, upperPipeHeight));
-        lowerPipe = new Pipe(lowerPipeImg,
+        lowerPipe = new Pipe(
+                lowerPipeImg,
                 new Position(pipesPosition_x, lowerPipePosition_y),
                 new Size(pipeWidth, lowerPipeHeight));
     }
 
     public void updatePipesLengths()
     {
-        int newUpperPipeHeight = random.nextInt((boardHeight * 7) / 10) + boardHeight / 10;
-        int newLowerPipeHeight = Math.max(boardHeight - newUpperPipeHeight - gap, boardHeight / 10);
+        int newUpperPipeHeight = Math.max(
+                random.nextInt((boardHeight * 7) / 10) + extraLength,
+                (boardHeight / 4) + extraLength);
+        int newLowerPipeHeight = boardHeight - newUpperPipeHeight - gap + extraLength;
 
         upperPipe.size.height = newUpperPipeHeight;
         lowerPipe.size.height = newLowerPipeHeight;
