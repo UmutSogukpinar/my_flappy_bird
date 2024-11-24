@@ -20,7 +20,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     // holding to initial position for restart
     PipePair[] initialPipePairArray;
     PipePair initialPipePair;
-    // coming soon ==>>> int score;
+    // scoreboard
+    double score = 0;
 
     //GAME constants
     static boolean isGameOver = false;
@@ -36,6 +37,9 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     static final int pipeNumber = 3;
     static final int gapBetweenPipes = (boardWidth * 2) / 3;
     static final int backToLastOne = pipeNumber * gapBetweenPipes;
+
+    static final int scoreboardPosition_x = 10;
+    static final int scoreboardPosition_y = 35;
 
     //GAME logic
     Timer gameLoop;
@@ -106,6 +110,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     {
         birdMove();
         allPipeMoves();
+        updateScore();
     }
 
     private void drawObjectsAndBackground(Graphics graphics)
@@ -134,6 +139,15 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
                     pipePair.lowerPipe.size.width, pipePair.lowerPipe.size.height,
                     null);
         }
+
+        graphics.setColor(Color.white);
+
+        graphics.setFont(new Font("Arial", Font.PLAIN, 32));
+        if (isGameOver)
+            graphics.drawString("Game Over: " + (int) score, scoreboardPosition_x, scoreboardPosition_y);
+        else
+            graphics.drawString(String.valueOf((int) score), scoreboardPosition_x, scoreboardPosition_y);
+
     }
 
     //bird movement
@@ -213,6 +227,15 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         }
     }
 
+    private void updateScore()
+    {
+        for(PipePair pipePair: pipePairArray)
+        {
+            if (Math.abs(pipePair.upperPipe.position.x_axis - bird.position.x_axis) <= pipeSpeed)
+                score += 0.5;
+        }
+    }
+
     //keyboard movements
     public void keyPressed(KeyEvent e)
     {
@@ -223,6 +246,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
                 //restart game by resetting conditions
                 bird.position.y_axis = initialBirdPosition_y;
                 bird.velocity.y_axis = 0;
+                score = 0;
+                restartPipePairs();
                 isGameOver = false;
                 gameLoop.start();
             }
@@ -271,6 +296,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     {
         bird.position.y_axis = initialBirdPosition_y;
         bird.velocity.y_axis = 0;
+        score = 0;
         restartPipePairs();
         isGameOver = false;
         gameLoop.start();
