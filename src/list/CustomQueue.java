@@ -1,8 +1,10 @@
 package src.list;
 
-public class CustomQueue<T>
+import java.util.Iterator;
+
+public class CustomQueue<T> implements Iterable<T>
 {
-    // node class initialization
+    // Node class initialization
     class Node
     {
         T data;
@@ -33,12 +35,7 @@ public class CustomQueue<T>
         return node.data;
     }
 
-    public Node getFirst()
-    {
-        return first;
-    }
-
-    // add element end of the queue
+    // Add element to the end of the queue
     public void enqueue(T data)
     {
         Node newNode = new Node(data);
@@ -51,6 +48,7 @@ public class CustomQueue<T>
         last = newNode;
     }
 
+    // Rotate the queue: move the first node to the end
     public void updateQueue()
     {
         if (first == null || first.next == null)
@@ -62,4 +60,35 @@ public class CustomQueue<T>
         last = firstNode;
         firstNode.next = null;
     }
+
+    // Implementing Iterable<T>
+    @Override
+    public Iterator<T> iterator()
+    {
+        return new CustomQueueIterator();
+    }
+
+    // Inner class for the iterator
+    private class CustomQueueIterator implements Iterator<T>
+    {
+        private Node current = first;
+
+        @Override
+        public boolean hasNext()
+        {
+            return current != null;
+        }
+
+        @Override
+        public T next()
+        {
+            if (!hasNext())
+                throw new IllegalStateException("No more elements");
+
+            T data = current.data;
+            current = current.next;
+            return data;
+        }
+    }
 }
+

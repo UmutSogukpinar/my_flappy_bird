@@ -6,17 +6,14 @@ import src.list.CustomQueue;
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 import java.util.Objects;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
 
-public class FlappyBird extends JPanel implements ActionListener, KeyListener
+public class FlappyBird extends JPanel implements ActionListener, KeyListener, MouseListener
 {
     //GAME attributes
     Bird bird;
@@ -27,7 +24,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
     //GAME constants
     static final int gravity = 1;
     static final int gap = boardHeight / 8;  // the gap between upper and lower pipe
-    static final int pipeSpeed = 10;
+    static final int pipeSpeed = 3;
+    static final int birdSpeed = 12;
 
     //GAME logic
     Timer gameLoop;
@@ -49,6 +47,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 
         setFocusable(true);
         addKeyListener(this);
+        addMouseListener(this);
 
         // bird initialization
         bird = new Bird(birdImage);
@@ -79,17 +78,19 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
                 bird.size.width, bird.size.height,
                 null);
 
-        // draw pipe pair-1
-        graphics.drawImage(pipePair_1.upperPipe.image,
-                pipePair_1.upperPipe.position.x_axis, pipePair_1.upperPipe.position.y_axis,
-                pipePair_1.upperPipe.size.width, pipePair_1.upperPipe.size.height,
-                null);
-        graphics.drawImage(pipePair_1.lowerPipe.image,
-                pipePair_1.lowerPipe.position.x_axis, pipePair_1.lowerPipe.position.y_axis,
-                pipePair_1.lowerPipe.size.width, pipePair_1.lowerPipe.size.height,
-                null);
+        // drawing each pipe pair
+        for (PipePair pipePair: pipePairQueue)
+        {
+            graphics.drawImage(pipePair.upperPipe.image,
+                    pipePair.upperPipe.position.x_axis, pipePair.upperPipe.position.y_axis,
+                    pipePair.upperPipe.size.width, pipePair.upperPipe.size.height,
+                    null);
+            graphics.drawImage(pipePair.lowerPipe.image,
+                    pipePair.lowerPipe.position.x_axis, pipePair.lowerPipe.position.y_axis,
+                    pipePair.lowerPipe.size.width, pipePair.lowerPipe.size.height,
+                    null);
+        }
     }
-
     // total movements
     private void gameMovements()
     {
@@ -107,7 +108,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
 
     private void allPipeMoves()
     {
-        eachPairPipeMove(pipePair_1);
+        for (PipePair pipePair: pipePairQueue)
+            eachPairPipeMove(pipePair);
     }
 
     private void eachPairPipeMove(PipePair pipePair)
@@ -115,11 +117,12 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         pipePair.upperPipe.position.x_axis -= pipeSpeed;
         pipePair.lowerPipe.position.x_axis -= pipeSpeed;
 
-        if (pipePair.upperPipe.position.x_axis <= -pipePair.upperPipe.size.width)
+        if (pipePair.upperPipe.position.x_axis <= -2 * pipePair.upperPipe.size.width)
         {
             pipePair.upperPipe.position.x_axis = boardWidth;
             pipePair.lowerPipe.position.x_axis = boardWidth;
 
+            // updating pipes' length with each new turn
             pipePair.updatePipesLengths();
         }
     }
@@ -132,6 +135,13 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
         drawObjectsAndBackground(graphics);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        gameMovements();
+        repaint();
+    }
+
     //keyboard movements
     public void keyPressed(KeyEvent e) {}
 
@@ -142,13 +152,25 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener
     public void keyReleased(KeyEvent e)
     {
         if (e.getKeyCode() == KeyEvent.VK_SPACE)
-            bird.velocity.y_axis -= 9;
+            bird.velocity.y_axis -= birdSpeed;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
+    public void mouseReleased(MouseEvent e)
     {
-        gameMovements();
-        repaint();
+        if (e.getButton() == MouseEvent.BUTTON1)
+            bird.velocity.y_axis -= birdSpeed;
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }
