@@ -14,9 +14,7 @@ public class App
 
         frame.setSize(boardWidth, boardHeight);
         frame.setResizable(false);
-
         frame.setLocationRelativeTo(null);  // Board will be centered of the screen
-
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // When the window is closed, jvm stops
 
         FlappyBird flappyBird = new FlappyBird();

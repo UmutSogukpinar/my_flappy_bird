@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.sql.Array;
 import java.util.Objects;
 
 import static src.App.boardHeight;
@@ -16,8 +15,11 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 {
     //GAME attributes
     Bird bird;
-    PipePair[] pipePairQueue;
+    PipePair[] pipePairArray;
     PipePair pipePair;
+    // holding to initial position for restart
+    PipePair[] initialPipePairArray;
+    PipePair initialPipePair;
     // coming soon ==>>> int score;
 
     //GAME constants
@@ -25,6 +27,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     static final int frameXLimit = -2 * pipeWidth;
     static final int frameYUpperLimit = -(boardHeight / 4);
 
+    static final int initialBirdPosition_y = boardHeight / 2;
     static final int gravity = 1;
     static final int birdSpeed = 12;
     static final int minBirdSpeed = birdSpeed * 15;
@@ -59,16 +62,21 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         // bird initialization
         bird = new Bird(birdImage);
         // pipe pair queue initialization
-        pipePairQueue = new PipePair[pipeNumber];
+        pipePairArray = new PipePair[pipeNumber];
+        initialPipePairArray = new PipePair[pipeNumber];
 
         for (int i = 0; i < pipeNumber; i++)
         {
             final int firstPipePosition = boardWidth + gapBetweenPipes * (i + 1);
             // pipe pairs initialization
             pipePair = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
+            initialPipePair = new PipePair(pipePair);
 
             // pipe pairs added to array
-            pipePairQueue[i] = pipePair;
+            pipePairArray[i] = pipePair;
+
+            // initial pairs array added
+            initialPipePairArray[i] = initialPipePair;
         }
 
         // game timer
@@ -115,7 +123,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
                 null);
 
         // drawing each pipe pair
-        for (PipePair pipePair: pipePairQueue)
+        for (PipePair pipePair: pipePairArray)
         {
             graphics.drawImage(pipePair.upperPipe.image,
                     pipePair.upperPipe.position.x_axis, pipePair.upperPipe.position.y_axis,
@@ -159,7 +167,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
         );
 
         // Check collision with each pipe pair
-        for (PipePair pipePair : pipePairQueue) {
+        for (PipePair pipePair : pipePairArray) {
             // Upper pipe rectangle
             Rectangle upperPipeRect = new Rectangle(
                     pipePair.upperPipe.position.x_axis,
@@ -185,7 +193,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
     private void allPipeMoves()
     {
-        for (PipePair pipePair: pipePairQueue)
+        for (PipePair pipePair: pipePairArray)
             eachPairPipeMove(pipePair);
     }
 
@@ -206,7 +214,20 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     }
 
     //keyboard movements
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+        {
+            if (isGameOver)
+            {
+                //restart game by resetting conditions
+                bird.position.y_axis = initialBirdPosition_y;
+                bird.velocity.y_axis = 0;
+                isGameOver = false;
+                gameLoop.start();
+            }
+        }
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -222,12 +243,19 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        if (e.getButton() == MouseEvent.BUTTON1)
+        if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3)
             bird.velocity.y_axis -= birdSpeed;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e)
+    {
+        if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3)
+        {
+            if (isGameOver)
+                restartGame();
+        }
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {}
@@ -237,4 +265,31 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
     @Override
     public void mouseExited(MouseEvent e) {}
+
+    //restart game by resetting conditions
+    private void restartGame()
+    {
+        bird.position.y_axis = initialBirdPosition_y;
+        bird.velocity.y_axis = 0;
+        restartPipePairs();
+        isGameOver = false;
+        gameLoop.start();
+    }
+
+    private void restartPipePairs()
+    {
+        for (int i = 0; i < pipeNumber; i++)
+        {
+            restartSinglePipe(pipePairArray[i].upperPipe, initialPipePairArray[i].upperPipe);
+            restartSinglePipe(pipePairArray[i].lowerPipe, initialPipePairArray[i].lowerPipe);
+        }
+    }
+
+    private void restartSinglePipe(PipePair.Pipe oldPipe, PipePair.Pipe newPipe)
+    {
+        oldPipe.position.y_axis = newPipe.position.y_axis;
+        oldPipe.position.x_axis = newPipe.position.x_axis;
+        oldPipe.size.height = newPipe.size.height;
+        oldPipe.size.width = newPipe.size.width;
+    }
 }

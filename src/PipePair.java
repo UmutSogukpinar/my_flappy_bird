@@ -22,6 +22,13 @@ public class PipePair
             this.position = position;
             this.size = size;
         }
+
+        public Pipe(Pipe other)
+        {
+            image = other.image;
+            position = new Position(other.position.x_axis, other.position.y_axis);
+            size = new Size(other.size.width, other.size.height);
+        }
     }
 
     // attributes of PipePair class
@@ -57,6 +64,11 @@ public class PipePair
                 lowerPipeImg,
                 new Position(pipesPosition_x, lowerPipePosition_y),
                 new Size(pipeWidth, lowerPipeHeight));
+    }
+    public PipePair(PipePair other)
+    {
+        this.upperPipe = new Pipe(other.upperPipe);
+        this.lowerPipe = new Pipe(other.lowerPipe);
     }
 
     public void updatePipesLengths()
