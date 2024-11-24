@@ -5,7 +5,6 @@ import java.util.Random;
 
 import static src.App.boardHeight;
 import static src.App.boardWidth;
-import static src.FlappyBird.gap;
 
 public class PipePair
 {
@@ -32,21 +31,24 @@ public class PipePair
     //common width of the pipes
     public static final int pipeWidth = boardWidth / 6;
 
+    // the gap between upper and lower pipe
+    private static final int gap = boardHeight / 6;
+
     // extra length for the pipes;
     private static final int extraLength = boardHeight / 2;
 
-    // random upper pipe height
-    public int upperPipeHeight = Math.max(
-            random.nextInt((boardHeight * 7) / 10) + extraLength,
-            (boardHeight / 4) + extraLength);
-    public int lowerPipeHeight = boardHeight - upperPipeHeight - gap + extraLength;
-
-    // y axis positions for pipes
-    int upperPipePosition_y = -extraLength;
-    int lowerPipePosition_y = boardHeight - lowerPipeHeight;
-
     public PipePair(Image upperPipeImg, Image lowerPipeImg, int pipesPosition_x)
     {
+        // random upper pipe height
+         int upperPipeHeight = Math.max(
+                random.nextInt((boardHeight * 7) / 10) + extraLength,
+                (boardHeight / 4) + extraLength);
+         int lowerPipeHeight = boardHeight - upperPipeHeight - gap + extraLength;
+
+        // y axis positions for pipes
+        int upperPipePosition_y = -extraLength;
+        int lowerPipePosition_y = boardHeight - lowerPipeHeight;
+
         upperPipe = new Pipe(
                 upperPipeImg,
                 new Position(pipesPosition_x, upperPipePosition_y),

@@ -29,8 +29,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     static final int birdSpeed = 12;
     static final int minBirdSpeed = birdSpeed * 15;
 
-    static final int gap = boardHeight / 6;  // the gap between upper and lower pipe
-    static final int pipeSpeed = 20;
+    static final int pipeSpeed = 4;
     static final int pipeNumber = 3;
     static final int gapBetweenPipes = (boardWidth * 2) / 3;
     static final int backToLastOne = pipeNumber * gapBetweenPipes;
@@ -59,6 +58,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
         // bird initialization
         bird = new Bird(birdImage);
+        // pipe pair queue initialization
         pipePairQueue = new PipePair[pipeNumber];
 
         for (int i = 0; i < pipeNumber; i++)
@@ -67,14 +67,22 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
             // pipe pairs initialization
             pipePair = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
 
-            // pipe pair queue initialization
-
+            // pipe pairs added to array
             pipePairQueue[i] = pipePair;
         }
 
         // game timer
         gameLoop = new Timer(1000/60, this);
         gameLoop.start();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        gameMovements();
+        repaint();
+        if (isGameOver)
+            gameLoop.stop();
     }
 
     // drawing attribute
@@ -90,16 +98,6 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
     {
         birdMove();
         allPipeMoves();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        gameMovements();
-        repaint();
-        if (isGameOver)
-            gameLoop.stop();
-
     }
 
     private void drawObjectsAndBackground(Graphics graphics)
@@ -141,8 +139,48 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
             bird.position.y_axis += Math.max(bird.velocity.y_axis, -minBirdSpeed);
 
         bird.position.y_axis = Math.max(bird.position.y_axis, frameYUpperLimit);
-        if (bird.position.y_axis >= boardHeight - bird.size.height)
+        if (isBirdUnderTheFrame() || isCollided())
             isGameOver = true;
+    }
+
+    private boolean isBirdUnderTheFrame()
+    {
+        return (bird.position.y_axis >= boardHeight - bird.size.height);
+    }
+
+    private boolean isCollided()
+    {
+        // Bird rectangle
+        Rectangle birdRect = new Rectangle(
+                bird.position.x_axis,
+                bird.position.y_axis,
+                bird.size.width,
+                bird.size.height
+        );
+
+        // Check collision with each pipe pair
+        for (PipePair pipePair : pipePairQueue) {
+            // Upper pipe rectangle
+            Rectangle upperPipeRect = new Rectangle(
+                    pipePair.upperPipe.position.x_axis,
+                    pipePair.upperPipe.position.y_axis,
+                    pipePair.upperPipe.size.width,
+                    pipePair.upperPipe.size.height
+            );
+
+            // Lower pipe rectangle
+            Rectangle lowerPipeRect = new Rectangle(
+                    pipePair.lowerPipe.position.x_axis,
+                    pipePair.lowerPipe.position.y_axis,
+                    pipePair.lowerPipe.size.width,
+                    pipePair.lowerPipe.size.height
+            );
+
+            // Check for collision
+            if (birdRect.intersects(upperPipeRect) || birdRect.intersects(lowerPipeRect))
+                return true; // Collision detected
+        }
+        return false; // No collision
     }
 
     private void allPipeMoves()
