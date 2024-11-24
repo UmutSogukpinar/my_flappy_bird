@@ -15,14 +15,14 @@ public class Bird
 
 
     // bird feature dimensions
-    int birdWidth = 34;
-    int birdHeight = 24;
+    private static final int birdWidth = 34;
+    private static final int birdHeight = 24;
 
-    int birdPosition_x = boardWidth / 8;
-    int birdPosition_y = boardHeight / 2;
+    private static final int birdPosition_x = boardWidth / 8;
+    private static final int birdPosition_y = boardHeight / 2;
 
-    int birdVelocity_y = 0;
-    int birdVelocity_x = 0;
+    private static final int birdVelocity_y = 0;
+    private static final int birdVelocity_x = 0;
 
     public Bird(Image image)
     {
