@@ -39,7 +39,7 @@ public class PipePair
     public static final int pipeWidth = boardWidth / 6;
 
     // the gap between upper and lower pipe
-    private static final int gap = boardHeight / 6;
+    private static final int gap = boardHeight / 5;
 
     // extra length for the pipes;
     private static final int extraLength = boardHeight / 2;

@@ -35,8 +35,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
     static final int pipeSpeed = 4;
     static final int pipeNumber = 3;
-    static final int gapBetweenPipes = (boardWidth * 2) / 3;
-    static final int backToLastOne = pipeNumber * gapBetweenPipes;
+    static final int distanceBetweenPipePairs = (boardWidth * 2) / 3;
+    static final int backToLastOne = pipeNumber * distanceBetweenPipePairs;
 
     static final int scoreboardPosition_x = 10;
     static final int scoreboardPosition_y = 35;
@@ -71,7 +71,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener, M
 
         for (int i = 0; i < pipeNumber; i++)
         {
-            final int firstPipePosition = boardWidth + gapBetweenPipes * (i + 1);
+            final int firstPipePosition = boardWidth + distanceBetweenPipePairs * (i + 1);
             // pipe pairs initialization
             pipePair = new PipePair(upperPipeImage, bottomPipeImage, firstPipePosition);
             initialPipePair = new PipePair(pipePair);
